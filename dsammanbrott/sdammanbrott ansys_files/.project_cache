@@ -14,7 +14,6 @@ dp0/SYS/MECH/cleanup-ansys-ShunoDator-9628.bat
 dp0/SYS/MECH/cleanup-ansys-ShunoDator-9636.bat
 dp0/SYS/MECH/ds.dat
 dp0/SYS/MECH/file.aapresults
-dp0/SYS/MECH/file.cnd
 dp0/SYS/MECH/file.mntr
 dp0/SYS/MECH/file.rst
 dp0/SYS/MECH/file0.err
@@ -25,6 +24,7 @@ dp0/act.dat
 dp0/designPoint.wbdp
 session_files/journal1.wbjn
 session_files/journal2.wbjn
+session_files/journal3.wbjn
 dp0/
 dpall/
 session_files/
