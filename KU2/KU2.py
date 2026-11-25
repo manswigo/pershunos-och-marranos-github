@@ -33,21 +33,20 @@ N = Mtot*g #Normalspänning [Pa]
 A = (np.pi*Td**2)/4
 Pturbin = 0.5*rho*A*Cp*vind**3
 
-vmark = (Pmark/(0.5*rho*A*Cp))**(1/3)
-
+vmark = (Pmark/(0.5*rho*A*Cp))**(1/3) #Märkvind
+Ftryck_mark = 0.5*rho*Ct*A*vmark**2 #Märktryck, beror på märkvind
 Ftryck = np.array([])
-for v in vind:
-    if v <= vmark: # ändrade tecken 
+for v in vind:  #Bestämmer tryck beroende på vind
+    if v < vmark: # ändrade tecken 
         Ftryck = np.append(Ftryck, 0.5*rho*Ct*A*v**2)
     else:
-        Ftryck_mark = 0.5*rho*Ct*A*vmark**2
         Ftryck = np.append(Ftryck, Ftryck_mark*(vmark/v)**k)
 M = h*Ftryck
 
 sig_b = M/Ws
 sig_n = N/As
-sig_tryck = sig_b + sig_n #'bakom tornet'
-sig_drag = sig_b - sig_n  #'framför tornet'
+sig_tryck = sig_b + sig_n #"bakom tornet"
+sig_drag = sig_b - sig_n  #"framför tornet"
 
 Aseg = As/nb
 Fn_tryck = sig_tryck * Aseg
