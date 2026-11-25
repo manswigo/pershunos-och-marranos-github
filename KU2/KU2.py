@@ -31,17 +31,17 @@ N = Mtot*g #Normalspänning [Pa]
 
 
 A = (np.pi*Td**2)/4
-Pturbin = rho*A*Cp*vind**3
+Pturbin = 0.5*rho*A*Cp*vind**3
 
 vmark = (Pmark/(0.5*rho*A*Cp))**(1/3)
 
 Ftryck = np.array([])
 for v in vind:
-    if v >= vmark:
-        Ftryck = np.append(Ftryck, 0.5*rho*Ct*v**2)
+    if v <= vmark: # ändrade tecken 
+        Ftryck = np.append(Ftryck, 0.5*rho*Ct*A*v**2)
     else:
         Ftryck_mark = 0.5*rho*Ct*A*vmark**2
-        Ftryck = np.append(Ftryck, Ftryck_mark*(vmark/v))
+        Ftryck = np.append(Ftryck, Ftryck_mark*(vmark/v)**k)
 M = h*Ftryck
 
 sig_b = M/Ws
