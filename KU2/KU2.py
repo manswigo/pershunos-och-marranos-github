@@ -1,26 +1,27 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 data = pd.read_csv('indata.csv', sep=';', decimal = ',')
 rho = 1.225 #[kg/m^3]
-tid = np.array(data['Tid'].values)
-vind = np.array(data['Wind'].values)
+tid = data['Tid'].values
+vind = data['Wind'].values
 Pturbin = np.array([])
 Cp = 0.45
 Cpteoretisk = 16/27
 Ct = 0.8 #Trust koefficient
 k = 1 
-h = 1 #Höjd torn [m]
-Rtorn = 1 #[m]
+h = 56.5 #Höjd torn [m]
+Rtorn = 3.25 #[m]
 dd = 2*Rtorn #Delningsdiamater [m]
-nb = 1 #Antal skruvar [st]
-Td = 1 #Turbindiameter [m]
-Pmark = 1 #Max effekt [MW]
-tf = 1 #Flänstjocklek [m]
-bf = 1 #Flänsbredd [m]
-Mt = 1 #Tornmassa [kg]
-Mn = 1 #Nacellmassa [kg]
-Mtb = 1 #Bladmassa [g]
-tfl = 1 #Väggtjocklek vid fläns [m]
+nb = 100 #Antal skruvar [st]
+Td = 199.38 #Turbindiameter [m]
+Pmax = 10e6 #Max effekt [W]
+tf = 175e-3 #Flänstjocklek [m]
+bf = 300e-3 #Flänsbredd [m]
+Mt = 230.2e3 #Tornmassa [kg]
+Mn = 250e3 #Nacellmassa [kg]
+Mtb = 48e3 #Bladmassa [kg]
+tfl = 55.01e-3 #Väggtjocklek vid fläns [m]
 g = 9.82 #[m/s^2]
 Di = 2*Rtorn + bf #Innerdiameter [m]
 Do = Di + 2*tfl #Ytterdiameter [m]
@@ -31,8 +32,8 @@ N = Mtot*g #Normalspänning [Pa]
 
 
 A = (np.pi*Td**2)/4
-Pturbin = 0.5*rho*A*Cp*vind**3
-
+Pturbin = 0.5*rho*A*Cpteoretisk*(vind**3)
+Pmark = Pmax*(Cp/Cpteoretisk)
 vmark = (Pmark/(0.5*rho*A*Cp))**(1/3) #Märkvind
 Ftryck_mark = 0.5*rho*Ct*A*vmark**2 #Märktryck, beror på märkvind
 Ftryck = np.array([])
@@ -44,13 +45,37 @@ for v in vind:  #Bestämmer tryck beroende på vind
 M = h*Ftryck
 
 sig_b = M/Ws
+print(max(sig_b))
 sig_n = N/As
-sig_tryck = sig_b + sig_n #"bakom tornet"
-sig_drag = sig_b - sig_n  #"framför tornet"
+print((sig_n))
 
+sig_tot_bak = sig_b + sig_n
+sig_tot_fram = sig_b - sig_n
 Aseg = As/nb
-Fn_tryck = sig_tryck * Aseg
-Fn_drag = sig_drag * Aseg
+Fn_tryck = sig_tot_bak * Aseg
+Fn_drag = sig_tot_fram * Aseg
 Fn_tryck_max = max(Fn_tryck)
 Fn_drag_max = max(Fn_drag)
-print(Fn_tryck_max, Fn_drag_max)
+print(Fn_tryck_max*10e-3, 'kN', Fn_drag_max*10e-3, 'kN')
+
+
+
+def f_delta(skruv, hylsa):
+    Eskruv = skruv[0]
+    Askruv = skruv[1]
+    Lskruv = skruv[2]
+    Ehylsa = hylsa[0]
+    Ahylsa = hylsa[1]
+    Lhylsa = hylsa[2]
+    
+    cs = (Eskruv*Askruv)/Lskruv
+    ck = (Ehylsa*Ahylsa)/2*Lhylsa
+    F = np.array(list((range(5000*10**3))))
+    deltas = F/cs
+    deltak = -1*F/ck
+    plt.plot(deltas, F)
+    plt.plot(deltak, F)
+    plt.show()
+    return(cs, ck)
+f_delta([10000000, 1, 1], [10000000, 1, 0.8])
+
