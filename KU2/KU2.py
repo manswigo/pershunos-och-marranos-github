@@ -60,7 +60,7 @@ print(Fn_tryck_max*10e-3, 'kN', Fn_drag_max*10e-3, 'kN')
 
 
 
-def f_delta(skruv, hylsa):
+def f_delta(skruv, hylsa, d0):
     Eskruv = skruv[0]
     Askruv = skruv[1]
     Lskruv = skruv[2]
@@ -69,13 +69,13 @@ def f_delta(skruv, hylsa):
     Lhylsa = hylsa[2]
     
     cs = (Eskruv*Askruv)/Lskruv
-    ck = (Ehylsa*Ahylsa)/2*Lhylsa
-    F = np.array(list((range(5000*10**3))))
+    ck = (Ehylsa*Ahylsa)/Lhylsa
+    F = np.array(list((range(5000))))
     deltas = F/cs
-    deltak = -1*F/ck
+    deltak = -1*(F/ck) + d0
     plt.plot(deltas, F)
     plt.plot(deltak, F)
     plt.show()
     return(cs, ck)
-f_delta([10000000, 1, 1], [10000000, 1, 0.8])
+f_delta([210*10**9, 1, 1], [210*10**9, 1, 0.8], 0.2)
 
